@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prefetch SDK Playground</title>
+    <script>
+      // Example of HTML prefetch script
+      (function() {
+        if (!window.fetch) return;
+
+        // Initialize datasource
+        window.__PREFETCH_SDK__ = { $source: {} };
+
+        // Example prefetch
+        var promise = fetch('https://jsonplaceholder.typicode.com/users/1')
+          .then(function(res) { return res.json(); })
+          .catch(function(err) { console.warn('Prefetch failed:', err); });
+
+        promise.clear = function() { delete window.__PREFETCH_SDK__['user:1']; };
+        window.__PREFETCH_SDK__['user:1'] = promise;
+        window.__PREFETCH_SDK__.$source['user:1'] = {
+          $path: 'https://jsonplaceholder.typicode.com/users/1',
+          $params: {}
+        };
+
+        // Another prefetch example
+        var todosPromise = fetch('https://jsonplaceholder.typicode.com/todos?_limit=5')
+          .then(function(res) { return res.json(); });
+        todosPromise.clear = function() { delete window.__PREFETCH_SDK__['todos']; };
+        window.__PREFETCH_SDK__['todos'] = todosPromise;
+        window.__PREFETCH_SDK__.$source['todos'] = {
+          $path: 'https://jsonplaceholder.typicode.com/todos',
+          $params: { _limit: 5 }
+        };
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
