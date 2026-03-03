@@ -1,257 +1,122 @@
 # Prefetch SDK
 
-A comprehensive prefetch solution for modern web applications. Optimize your app's performance by starting data fetching before JavaScript loads.
+通用的预请求 SDK，支持跨项目公用。
 
-## Features
+## 包结构
 
-- **HTML Prefetch**: Start fetching in `<head>` before JS bundle loads
-- **React Integration**: Hooks and components for easy React integration
-- **SWR Support**: Seamless integration with SWR for data fetching
-- **Cache Strategies**: Flexible caching (localStorage, sessionStorage, memory)
-- **Dependency Support**: Prefetch requests that depend on other requests
-- **Idle Prefetch**: Prefetch data when browser is idle
+| 包名 | 描述 |
+|------|------|
+| `@prefetch-sdk/core` | 核心工具包 - 请求池、缓存策略、工具函数 |
+| `@prefetch-sdk/html-script` | HTML 内联脚本 - 在 JS 加载前提前发起请求 |
+| `@prefetch-sdk/swr` | SWR 集成 - 预热/预加载到 SWR 缓存 |
 
-## Packages
-
-| Package | Description |
-|---------|-------------|
-| `@prefetch-sdk/core` | Core prefetch pool and scheduler |
-| `@prefetch-sdk/cache` | Cache strategies and storage adapters |
-| `@prefetch-sdk/html-script` | HTML inline script generation |
-| `@prefetch-sdk/react` | React hooks and components |
-| `@prefetch-sdk/utils` | Utility functions |
-
-## Installation
+## 安装
 
 ```bash
-# Using pnpm
-pnpm add @prefetch-sdk/core @prefetch-sdk/react
+# 核心包
+pnpm add @prefetch-sdk/core
 
-# Using npm
-npm install @prefetch-sdk/core @prefetch-sdk/react
+# HTML 预请求
+pnpm add @prefetch-sdk/html-script
 
-# Using yarn
-yarn add @prefetch-sdk/core @prefetch-sdk/react
+# SWR 集成
+pnpm add @prefetch-sdk/swr
 ```
 
-## Quick Start
+## 快速开始
 
-### 1. HTML Prefetch (Inline Script)
+### 1. HTML 预请求
 
-Add a script to your HTML `<head>` to start prefetching before React loads:
+在 HTML `<head>` 中内联脚本，JS 加载前就开始请求：
 
 ```html
-<!DOCTYPE html>
-<html>
 <head>
   <script>
     (function() {
-      if (!window.fetch) return;
-
       window.__PREFETCH_SDK__ = { $source: {} };
-
-      var promise = fetch('/api/user')
-        .then(function(res) { return res.json(); });
+      var promise = fetch('/api/user').then(r => r.json());
       promise.clear = function() { delete window.__PREFETCH_SDK__['user']; };
-
       window.__PREFETCH_SDK__['user'] = promise;
-      window.__PREFETCH_SDK__.$source['user'] = {
-        $path: '/api/user',
-        $params: {}
-      };
+      window.__PREFETCH_SDK__.$source['user'] = { $path: '/api/user', $params: {} };
     })();
   </script>
 </head>
-<body>
-  <div id="root"></div>
-</body>
-</html>
 ```
 
-### 2. Consume in React
+在 React 中消费：
 
 ```tsx
-import { useConsumePrefetch } from '@prefetch-sdk/react';
+import { consumePrefetch } from '@prefetch-sdk/html-script';
 
+const data = await consumePrefetch<User>('user');
+```
+
+### 2. SWR 预热
+
+```tsx
+import { preloadBySwr, useRequestBySwr } from '@prefetch-sdk/swr';
+
+// 预热到 SWR 缓存
+await preloadBySwr(fetchUser, { id: 1 }, { metadata: { levelType: 'user' } });
+
+// 组件中使用
 function UserProfile() {
-  const { data, isLoading } = useConsumePrefetch<User>('user');
-
-  if (isLoading) return <Loading />;
+  const { data, pending, refresh } = useRequestBySwr(
+    fetchUser,
+    { id: 1 },
+    { metadata: { levelType: 'user' } }
+  );
   return <div>{data?.name}</div>;
 }
 ```
 
-### 3. React Prefetch
+### 3. 缓存策略
 
 ```tsx
-import { usePrefetch, PrefetchProvider } from '@prefetch-sdk/react';
+import { withCache, todayCacheStrategy, ttlCacheStrategy } from '@prefetch-sdk/core';
 
-function App() {
-  return (
-    <PrefetchProvider>
-      <UserList />
-    </PrefetchProvider>
-  );
-}
-
-function UserList() {
-  const { prefetch, data } = usePrefetch({
-    name: 'users',
-    fetcher: async () => {
-      const res = await fetch('/api/users');
-      return res.json();
-    },
-  });
-
-  useEffect(() => {
-    prefetch();
-  }, []);
-
-  return <div>{JSON.stringify(data)}</div>;
-}
-```
-
-### 4. SWR Integration
-
-```tsx
-import { useRequestBySwr, preloadBySwr } from '@prefetch-sdk/react/swr';
-
-// Preload data
-await preloadBySwr(
-  fetchUsers,
-  { page: 1 },
-  { metadata: { levelType: 'userList' } }
-);
-
-// Use in component
-function UserList() {
-  const { data, refresh, pending } = useRequestBySwr(
-    fetchUsers,
-    { page: 1 },
-    { metadata: { levelType: 'userList' } }
-  );
-
-  return (
-    <div>
-      {pending ? 'Loading...' : JSON.stringify(data)}
-      <button onClick={refresh}>Refresh</button>
-    </div>
-  );
-}
-```
-
-### 5. Cache Strategies
-
-```tsx
-import { withCache, todayCacheStrategy, ttlCacheStrategy } from '@prefetch-sdk/cache';
-
-// Cache for today
+// 当天缓存
 const cachedFetcher = withCache(
   fetchData,
   todayCacheStrategy((params) => `data:${params.id}`)
 );
 
-// Cache for 5 minutes
-const ttlCachedFetcher = withCache(
+// TTL 缓存 (5分钟)
+const ttlFetcher = withCache(
   fetchData,
   ttlCacheStrategy((params) => `data:${params.id}`, 5 * 60 * 1000)
 );
 ```
 
-## Advanced Usage
-
-### Dependency Chain
+### 4. 请求池
 
 ```tsx
 import { createPrefetchPool } from '@prefetch-sdk/core';
 
 const pool = createPrefetchPool({ debug: true });
 
-// First prefetch
-await pool.execute({
-  name: 'auth',
-  fetcher: fetchAuth,
-});
-
-// Depends on auth
+// 添加预请求
 await pool.execute({
   name: 'userData',
-  fetcher: fetchUserData,
-  dependencies: ['auth'],
-  condition: (results) => results[0]?.isAuthenticated,
+  fetcher: fetchUser,
+  params: { id: 1 },
 });
+
+// 消费
+const data = await pool.consume('userData');
 ```
 
-### Idle Prefetch
-
-```tsx
-import { usePrefetchOnIdle } from '@prefetch-sdk/react';
-
-function App() {
-  const { prefetch, cancel } = usePrefetchOnIdle(
-    { name: 'background-data', fetcher: fetchBackgroundData },
-    { timeout: 2000, delay: 1000 }
-  );
-
-  useEffect(() => {
-    prefetch();
-    return cancel;
-  }, []);
-}
-```
-
-### Generate HTML Script
-
-```tsx
-import { generateScriptTag } from '@prefetch-sdk/html-script';
-
-const script = generateScriptTag([
-  {
-    name: 'user',
-    path: '/api/user',
-    params: { id: 1 },
-  },
-  {
-    name: 'posts',
-    path: '/api/posts',
-    dependencies: ['user'],
-    condition: (results) => !!results[0],
-  },
-]);
-
-// Use in your HTML template
-```
-
-## Development
+## 开发
 
 ```bash
-# Install dependencies
+# 安装依赖
 pnpm install
 
-# Build all packages
+# 构建
 pnpm build
 
-# Run playground
+# 启动 playground
 pnpm playground
-
-# Run tests
-pnpm test
-```
-
-## Architecture
-
-```
-prefetch-sdk/
-├── packages/
-│   ├── core/           # Core pool and scheduler
-│   ├── cache/          # Cache strategies
-│   ├── html-script/    # HTML script generation
-│   ├── react/          # React hooks and components
-│   └── utils/          # Utility functions
-├── apps/
-│   ├── playground/     # Demo application
-│   └── docs/           # Documentation (VitePress)
-└── turbo.json          # Turbo configuration
 ```
 
 ## License

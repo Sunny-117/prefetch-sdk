@@ -16,38 +16,19 @@
         "types": "./dist/index.d.cts",
         "default": "./dist/index.cjs"
       }
-    },
-    "./runtime": {
-      "import": {
-        "types": "./dist/runtime.d.ts",
-        "default": "./dist/runtime.js"
-      },
-      "require": {
-        "types": "./dist/runtime.d.cts",
-        "default": "./dist/runtime.cjs"
-      }
     }
   },
   "files": ["dist"],
   "scripts": {
-    "build": "tsup src/index.ts src/runtime.ts --format esm,cjs --dts --clean",
-    "dev": "tsup src/index.ts src/runtime.ts --format esm,cjs --dts --watch",
-    "lint": "oxlint src",
-    "format": "oxlint src --fix",
-    "test": "vitest run",
-    "test:watch": "vitest",
+    "build": "tsup src/index.ts --format esm,cjs --dts --clean",
+    "dev": "tsup src/index.ts --format esm,cjs --dts --watch",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
-  "dependencies": {
-    "@prefetch-sdk/core": "workspace:*"
-  },
   "devDependencies": {
-    "oxlint": "^0.15.0",
     "tsup": "^8.3.5",
-    "typescript": "^5.7.2",
-    "vitest": "^2.1.8"
+    "typescript": "^5.7.2"
   },
-  "keywords": ["prefetch", "preload", "html", "script", "inline"],
+  "keywords": ["prefetch", "preload", "html", "script"],
   "license": "MIT"
 }

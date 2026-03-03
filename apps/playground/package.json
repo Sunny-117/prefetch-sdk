@@ -10,10 +10,8 @@
   },
   "dependencies": {
     "@prefetch-sdk/core": "workspace:*",
-    "@prefetch-sdk/cache": "workspace:*",
     "@prefetch-sdk/html-script": "workspace:*",
-    "@prefetch-sdk/react": "workspace:*",
-    "@prefetch-sdk/utils": "workspace:*",
+    "@prefetch-sdk/swr": "workspace:*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "swr": "^2.2.5"

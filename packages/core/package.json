@@ -1,7 +1,7 @@
 {
   "name": "@prefetch-sdk/core",
   "version": "0.1.0",
-  "description": "Core prefetch SDK - request pool and scheduler",
+  "description": "Core utilities for prefetch SDK - pool, cache, and helpers",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -22,24 +22,13 @@
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts --clean",
     "dev": "tsup src/index.ts --format esm,cjs --dts --watch",
-    "lint": "oxlint src",
-    "format": "oxlint src --fix",
-    "test": "vitest run",
-    "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
   "devDependencies": {
-    "oxlint": "^0.15.0",
     "tsup": "^8.3.5",
-    "typescript": "^5.7.2",
-    "vitest": "^2.1.8"
+    "typescript": "^5.7.2"
   },
-  "keywords": ["prefetch", "preload", "request", "performance"],
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/user/prefetch-sdk.git",
-    "directory": "packages/core"
-  }
+  "keywords": ["prefetch", "preload", "cache", "request"],
+  "license": "MIT"
 }

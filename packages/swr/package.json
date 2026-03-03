@@ -1,7 +1,7 @@
 {
-  "name": "@prefetch-sdk/utils",
+  "name": "@prefetch-sdk/swr",
   "version": "0.1.0",
-  "description": "Utilities for prefetch SDK",
+  "description": "SWR preload/prefetch integration",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -20,21 +20,22 @@
   },
   "files": ["dist"],
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts --clean",
-    "dev": "tsup src/index.ts --format esm,cjs --dts --watch",
-    "lint": "oxlint src",
-    "format": "oxlint src --fix",
-    "test": "vitest run",
-    "test:watch": "vitest",
+    "build": "tsup",
+    "dev": "tsup --watch",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
-  "devDependencies": {
-    "oxlint": "^0.15.0",
-    "tsup": "^8.3.5",
-    "typescript": "^5.7.2",
-    "vitest": "^2.1.8"
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "swr": ">=2.0.0"
   },
-  "keywords": ["prefetch", "utils", "helpers"],
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "react": "^18.3.1",
+    "swr": "^2.2.5",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
+  },
+  "keywords": ["prefetch", "preload", "swr", "react"],
   "license": "MIT"
 }
