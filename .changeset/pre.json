@@ -1,0 +1,14 @@
+{
+  "mode": "pre",
+  "tag": "beta",
+  "initialVersions": {
+    "playground": "0.0.1",
+    "docs": "0.0.1",
+    "@prefetch-sdk/core": "0.0.1",
+    "@prefetch-sdk/html-script": "0.0.1",
+    "@prefetch-sdk/swr": "0.0.1"
+  },
+  "changesets": [
+    "auto-1772518818"
+  ]
+}
