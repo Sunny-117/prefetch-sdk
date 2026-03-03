@@ -1,6 +1,19 @@
-# Prefetch SDK
+<p align="center">
+  <img src="./docs/public/logo.svg" width="120" height="120" alt="Prefetch SDK Logo">
+</p>
 
-通用的预请求解决方案，在 JS 加载前提前发起请求，大幅提升首屏性能
+<h1 align="center">Prefetch SDK</h1>
+
+<p align="center">
+  通用的预请求解决方案，在 JS 加载前提前发起请求，大幅提升首屏性能
+</p>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/@prefetch-sdk/core"><img src="https://img.shields.io/npm/v/@prefetch-sdk/core.svg?style=flat&colorA=18181B&colorB=42b883" alt="npm version"></a>
+  <a href="https://github.com/Sunny-117/prefetch-sdk/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/@prefetch-sdk/core.svg?style=flat&colorA=18181B&colorB=42b883" alt="license"></a>
+</p>
+
+---
 
 ## 包结构
 
