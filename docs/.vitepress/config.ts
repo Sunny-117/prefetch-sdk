@@ -4,6 +4,7 @@ export default defineConfig({
   title: 'Prefetch SDK',
   description: '通用的预请求 SDK，支持跨项目公用',
   lang: 'zh-CN',
+  base: "/prefetch-sdk/",
 
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }],
