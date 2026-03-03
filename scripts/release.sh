@@ -145,9 +145,16 @@ fi
 NPM_USER=$(npm whoami)
 print_success "已登录 npm，用户: $NPM_USER"
 
+# 检查并安装依赖
+if [ ! -d "node_modules" ]; then
+    print_warning "node_modules 不存在，正在安装依赖..."
+    pnpm install
+    print_success "依赖安装完成"
+fi
+
 # 清理并构建
 print_info "清理旧的构建文件..."
-pnpm clean || true
+rm -rf packages/*/dist || true
 
 print_info "构建所有包..."
 pnpm build
