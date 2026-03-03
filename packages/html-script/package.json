@@ -30,5 +30,17 @@
     "typescript": "^5.7.2"
   },
   "keywords": ["prefetch", "preload", "html", "script"],
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Sunny-117/prefetch-sdk.git",
+    "directory": "packages/html-script"
+  },
+  "homepage": "https://github.com/Sunny-117/prefetch-sdk#readme",
+  "bugs": {
+    "url": "https://github.com/Sunny-117/prefetch-sdk/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }
