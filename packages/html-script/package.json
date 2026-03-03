@@ -1,6 +1,6 @@
 {
   "name": "@prefetch-sdk/html-script",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "HTML inline script for early prefetch before JS loads",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -18,7 +18,9 @@
       }
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts --clean",
     "dev": "tsup src/index.ts --format esm,cjs --dts --watch",
@@ -29,7 +31,12 @@
     "tsup": "^8.3.5",
     "typescript": "^5.7.2"
   },
-  "keywords": ["prefetch", "preload", "html", "script"],
+  "keywords": [
+    "prefetch",
+    "preload",
+    "html",
+    "script"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",

@@ -1,6 +1,6 @@
 {
   "name": "@prefetch-sdk/swr",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "SWR preload/prefetch integration",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -18,7 +18,9 @@
       }
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
@@ -36,7 +38,12 @@
     "tsup": "^8.3.5",
     "typescript": "^5.7.2"
   },
-  "keywords": ["prefetch", "preload", "swr", "react"],
+  "keywords": [
+    "prefetch",
+    "preload",
+    "swr",
+    "react"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
