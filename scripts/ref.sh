@@ -184,9 +184,12 @@ case $RELEASE_TYPE in
 
             cat > "$CHANGESET_FILE" << EOF
 ---
-"@prefetch-sdk/core": patch
-"@prefetch-sdk/html-script": patch
-"@prefetch-sdk/swr": patch
+"@ureq/core": patch
+"@ureq/business": patch
+"@ureq/impl-axios": patch
+"@ureq/impl-fetch": patch
+"@ureq/lib-cache-store": patch
+"@ureq/lib-hash": patch
 ---
 
 发布 $RELEASE_TYPE 预发布版本
@@ -241,9 +244,12 @@ EOF
 
             cat > "$CHANGESET_FILE" << EOF
 ---
-"@prefetch-sdk/core": patch
-"@prefetch-sdk/html-script": patch
-"@prefetch-sdk/swr": patch
+"@ureq/core": patch
+"@ureq/business": patch
+"@ureq/impl-axios": patch
+"@ureq/impl-fetch": patch
+"@ureq/lib-cache-store": patch
+"@ureq/lib-hash": patch
 ---
 
 发布新版本
@@ -294,5 +300,5 @@ case $RELEASE_TYPE in
 esac
 
 print_info "查看已发布的包："
-echo "  npm view @prefetch-sdk/core dist-tags"
-echo "  npm view @prefetch-sdk/core versions"
+echo "  npm view @ureq/core dist-tags"
+echo "  npm view @ureq/core versions"

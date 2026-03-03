@@ -16,8 +16,7 @@
     "docs:build": "pnpm --filter docs build",
     "changeset": "changeset",
     "version": "changeset version",
-    "release": "pnpm build && changeset publish",
-    "release:cli": "./scripts/release.sh"
+    "release": "./scripts/release.sh"
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.8",

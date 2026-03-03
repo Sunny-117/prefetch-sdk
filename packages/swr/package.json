@@ -1,6 +1,6 @@
 {
   "name": "@prefetch-sdk/swr",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "SWR preload/prefetch integration",
   "type": "module",
   "main": "./dist/index.cjs",

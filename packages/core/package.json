@@ -1,6 +1,6 @@
 {
   "name": "@prefetch-sdk/core",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Core utilities for prefetch SDK - pool, cache, and helpers",
   "type": "module",
   "main": "./dist/index.cjs",
