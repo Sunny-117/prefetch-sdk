@@ -17,7 +17,7 @@ hero:
       link: /api/
     - theme: alt
       text: GitHub
-      link: https://github.com/example/prefetch-sdk
+      link: https://github.com/Sunny-117/prefetch-sdk
 
 features:
   - icon: ⚡
@@ -47,28 +47,3 @@ features:
     title: TypeScript 支持
     details: 完整的 TypeScript 类型定义，享受智能提示和类型检查
 ---
-
-<style>
-:root {
-  --vp-home-hero-name-color: transparent;
-  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #3b82f6 30%, #8b5cf6);
-  --vp-home-hero-image-background-image: linear-gradient(-45deg, #3b82f620 50%, #8b5cf620 50%);
-  --vp-home-hero-image-filter: blur(44px);
-}
-
-.dark {
-  --vp-home-hero-image-background-image: linear-gradient(-45deg, #3b82f630 50%, #8b5cf630 50%);
-}
-
-@media (min-width: 640px) {
-  :root {
-    --vp-home-hero-image-filter: blur(56px);
-  }
-}
-
-@media (min-width: 960px) {
-  :root {
-    --vp-home-hero-image-filter: blur(68px);
-  }
-}
-</style>
