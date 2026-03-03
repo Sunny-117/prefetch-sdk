@@ -185,19 +185,20 @@ case $RELEASE_TYPE in
         if [ ! "$(ls -A .changeset/*.md 2>/dev/null | grep -v README)" ]; then
             print_warning "没有找到 changeset，自动创建一个..."
 
+            # 确保 .changeset 目录存在
+            mkdir -p .changeset
+
             # 创建 changeset 内容
             TIMESTAMP=$(date +%s)
             CHANGESET_FILE=".changeset/auto-${TIMESTAMP}.md"
 
-            cat > "$CHANGESET_FILE" << EOF
----
-"@prefetch-sdk/core": patch
-"@prefetch-sdk/html-script": patch
-"@prefetch-sdk/swr": patch
----
-
-发布 $RELEASE_TYPE 预发布版本
-EOF
+            echo '---' > "$CHANGESET_FILE"
+            echo '"@prefetch-sdk/core": patch' >> "$CHANGESET_FILE"
+            echo '"@prefetch-sdk/html-script": patch' >> "$CHANGESET_FILE"
+            echo '"@prefetch-sdk/swr": patch' >> "$CHANGESET_FILE"
+            echo '---' >> "$CHANGESET_FILE"
+            echo '' >> "$CHANGESET_FILE"
+            echo "发布 $RELEASE_TYPE 预发布版本" >> "$CHANGESET_FILE"
 
             print_success "已创建 changeset: $CHANGESET_FILE"
         fi
@@ -242,19 +243,20 @@ EOF
         if [ ! "$(ls -A .changeset/*.md 2>/dev/null | grep -v README)" ]; then
             print_warning "没有找到 changeset，自动创建一个..."
 
+            # 确保 .changeset 目录存在
+            mkdir -p .changeset
+
             # 创建 changeset 内容
             TIMESTAMP=$(date +%s)
             CHANGESET_FILE=".changeset/auto-${TIMESTAMP}.md"
 
-            cat > "$CHANGESET_FILE" << EOF
----
-"@prefetch-sdk/core": patch
-"@prefetch-sdk/html-script": patch
-"@prefetch-sdk/swr": patch
----
-
-发布新版本
-EOF
+            echo '---' > "$CHANGESET_FILE"
+            echo '"@prefetch-sdk/core": patch' >> "$CHANGESET_FILE"
+            echo '"@prefetch-sdk/html-script": patch' >> "$CHANGESET_FILE"
+            echo '"@prefetch-sdk/swr": patch' >> "$CHANGESET_FILE"
+            echo '---' >> "$CHANGESET_FILE"
+            echo '' >> "$CHANGESET_FILE"
+            echo "发布新版本" >> "$CHANGESET_FILE"
 
             print_success "已创建 changeset: $CHANGESET_FILE"
         fi
