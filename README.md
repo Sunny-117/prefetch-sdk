@@ -132,6 +132,29 @@ pnpm build
 pnpm playground
 ```
 
+## 发包
+
+### 手动发包
+
+```bash
+# 1. 创建 changeset (记录变更)
+pnpm changeset
+
+# 2. 更新版本号和 CHANGELOG
+pnpm version
+
+# 3. 构建并发布
+pnpm release
+```
+
+### 自动发包 (CI)
+
+推送到 main 分支后，GitHub Actions 会自动：
+- 若有 changeset：创建 Release PR
+- 合并 Release PR 后：自动发布到 npm
+
+**注意**：需在 GitHub 仓库设置 `NPM_TOKEN` Secret。
+
 ## License
 
 MIT
