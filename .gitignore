@@ -30,3 +30,5 @@ coverage
 .env
 .env.local
 .env.*.local
+
+docs/.vitepress/cache

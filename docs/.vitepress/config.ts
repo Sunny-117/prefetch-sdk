@@ -5,7 +5,14 @@ export default defineConfig({
   description: '通用的预请求 SDK，支持跨项目公用',
   lang: 'zh-CN',
 
+  head: [
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }],
+  ],
+
   themeConfig: {
+    logo: '/logo.svg',
+    siteTitle: 'Prefetch SDK',
+
     nav: [
       { text: '指南', link: '/guide/' },
       { text: 'API', link: '/api/' },
@@ -49,10 +56,28 @@ export default defineConfig({
 
     footer: {
       message: '基于 MIT 许可发布',
+      copyright: 'Copyright © 2024 Prefetch SDK',
     },
 
     search: {
       provider: 'local',
     },
+
+    outline: {
+      label: '页面导航',
+    },
+
+    docFooter: {
+      prev: '上一页',
+      next: '下一页',
+    },
+
+    lastUpdated: {
+      text: '最后更新于',
+    },
+
+    returnToTopLabel: '回到顶部',
+    sidebarMenuLabel: '菜单',
+    darkModeSwitchLabel: '主题',
   },
 });

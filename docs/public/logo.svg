@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6"/>
+      <stop offset="100%" style="stop-color:#8b5cf6"/>
+    </linearGradient>
+  </defs>
+  <!-- 外圆 -->
+  <circle cx="64" cy="64" r="56" fill="none" stroke="url(#grad)" stroke-width="6"/>
+  <!-- 闪电符号代表预加载/快速 -->
+  <path d="M72 28 L48 68 L60 68 L56 100 L80 56 L66 56 Z" fill="url(#grad)"/>
+  <!-- 前进箭头代表预请求 -->
+  <path d="M20 64 L36 52 L36 60 L44 60 L44 68 L36 68 L36 76 Z" fill="url(#grad)" opacity="0.7"/>
+</svg>
