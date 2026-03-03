@@ -1,0 +1,115 @@
+/**
+ * Vue 官方文档风格主题
+ * 主色调：绿色 (#42b883)
+ */
+
+:root {
+  /* Vue 绿色主题色 */
+  --vp-c-brand-1: #42b883;
+  --vp-c-brand-2: #33a06f;
+  --vp-c-brand-3: #42b883;
+  --vp-c-brand-soft: rgba(66, 184, 131, 0.14);
+
+  /* 首页 Hero 渐变背景 */
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: -webkit-linear-gradient(
+    120deg,
+    #35495e 30%,
+    #42b883
+  );
+
+  --vp-home-hero-image-background-image: linear-gradient(
+    -45deg,
+    #42b88350 50%,
+    #35495e50 50%
+  );
+  --vp-home-hero-image-filter: blur(44px);
+}
+
+.dark {
+  --vp-c-brand-1: #42b883;
+  --vp-c-brand-2: #5dd5a8;
+  --vp-c-brand-3: #42b883;
+  --vp-c-brand-soft: rgba(66, 184, 131, 0.16);
+
+  --vp-home-hero-image-background-image: linear-gradient(
+    -45deg,
+    #42b88350 50%,
+    #35495e80 50%
+  );
+}
+
+/* 自定义按钮样式 */
+:root {
+  --vp-button-brand-border: transparent;
+  --vp-button-brand-text: #fff;
+  --vp-button-brand-bg: #42b883;
+  --vp-button-brand-hover-border: transparent;
+  --vp-button-brand-hover-text: #fff;
+  --vp-button-brand-hover-bg: #33a06f;
+  --vp-button-brand-active-border: transparent;
+  --vp-button-brand-active-text: #fff;
+  --vp-button-brand-active-bg: #2c8a5f;
+}
+
+/* 链接高亮色 */
+:root {
+  --vp-c-text-code: #42b883;
+}
+
+/* 侧边栏激活状态 */
+:root {
+  --vp-sidebar-item-active-text-color: #42b883;
+}
+
+/* 代码块高亮 */
+:root {
+  --vp-code-block-bg: #f6f8fa;
+  --vp-code-copy-code-hover-bg: rgba(66, 184, 131, 0.1);
+}
+
+.dark {
+  --vp-code-block-bg: #1a1a1a;
+}
+
+/* 徽章样式 */
+:root {
+  --vp-badge-info-border: transparent;
+  --vp-badge-info-text: #35495e;
+  --vp-badge-info-bg: rgba(66, 184, 131, 0.14);
+  --vp-badge-tip-border: transparent;
+  --vp-badge-tip-text: #42b883;
+  --vp-badge-tip-bg: rgba(66, 184, 131, 0.14);
+}
+
+.dark {
+  --vp-badge-info-text: #aac8e4;
+}
+
+/* 自定义容器样式 */
+:root {
+  --vp-custom-block-tip-border: #42b883;
+  --vp-custom-block-tip-text: #35495e;
+  --vp-custom-block-tip-bg: rgba(66, 184, 131, 0.08);
+  --vp-custom-block-tip-code-bg: rgba(66, 184, 131, 0.12);
+}
+
+.dark {
+  --vp-custom-block-tip-text: #a3e4d7;
+  --vp-custom-block-tip-bg: rgba(66, 184, 131, 0.16);
+}
+
+/* 特性卡片悬停效果 */
+.VPFeature:hover {
+  border-color: #42b883 !important;
+}
+
+/* 导航栏激活链接 */
+.VPNavBarMenuLink.active {
+  color: #42b883 !important;
+}
+
+/* 搜索框样式 */
+:root {
+  --vp-search-highlight-color: #42b883;
+}
