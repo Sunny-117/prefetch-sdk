@@ -1,9 +1,17 @@
 /**
  * @prefetch-sdk/html-script
- * HTML inline script for early prefetch before JS loads
+ * HTML 内联脚本 - 在 JS 加载前提前发起请求
  */
 
-// ============ Types ============
+// ============ 全局类型扩展 ============
+
+declare global {
+  interface Window {
+    [key: string]: unknown;
+  }
+}
+
+// ============ 类型定义 ============
 
 export interface HtmlPrefetchConfig {
   name: string;
@@ -29,7 +37,7 @@ export interface PrefetchDatasource {
 
 export const NAMESPACE = '__PREFETCH_SDK__';
 
-// ============ Script Generation ============
+// ============ 脚本生成 ============
 
 export interface GenerateScriptOptions {
   namespace?: string;
@@ -45,7 +53,7 @@ async function prefetchFetch(path, params) {
     headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
     body: JSON.stringify(params),
   });
-  if (!response.ok) throw new Error('Prefetch failed: ' + response.status);
+  if (!response.ok) throw new Error('预请求失败: ' + response.status);
   return response.json();
 }
 `;
@@ -166,7 +174,11 @@ export function generateScriptTag(configs: HtmlPrefetchConfig[], options?: Gener
   return `<script>\n${generateInlineScript(configs, options)}\n</script>`;
 }
 
-// ============ Consumption ============
+// ============ 消费预请求 ============
+
+export interface PrefetchPromise<T = unknown> extends Promise<T> {
+  clear?: () => void;
+}
 
 export async function consumePrefetch<TData = unknown>(
   name: string,
@@ -176,15 +188,15 @@ export async function consumePrefetch<TData = unknown>(
 
   if (typeof window === 'undefined') return fallback?.();
 
-  const datasource = (window as unknown as Record<string, unknown>)[namespace] as PrefetchDatasource | undefined;
+  const datasource = window[namespace] as PrefetchDatasource | undefined;
   if (!datasource) return fallback?.();
 
-  const promise = datasource[name] as (Promise<unknown> & { clear?: () => void }) | undefined;
+  const promise = datasource[name] as PrefetchPromise<TData> | undefined;
   if (!promise) return fallback?.();
 
   try {
     const data = await promise;
-    return data as TData;
+    return data;
   } catch {
     return fallback?.();
   } finally {
@@ -199,7 +211,7 @@ export function getPrefetchSource(
   const { namespace = NAMESPACE } = options;
   if (typeof window === 'undefined') return undefined;
 
-  const datasource = (window as unknown as Record<string, unknown>)[namespace] as PrefetchDatasource | undefined;
+  const datasource = window[namespace] as PrefetchDatasource | undefined;
   const source = datasource?.$source?.[name];
   if (!source) return undefined;
 

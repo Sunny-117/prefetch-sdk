@@ -1,12 +1,12 @@
 /**
  * @prefetch-sdk/swr
- * SWR preload/prefetch integration
+ * SWR 集成 - 预热/预加载到 SWR 缓存
  */
 
 import { useCallback, useMemo } from 'react';
-import useSWR, { useSWRConfig, preload as swrPreload } from 'swr';
+import useSWR, { useSWRConfig, preload as swrPreload, type Cache, type State } from 'swr';
 
-// ============ Types ============
+// ============ 类型定义 ============
 
 export type Fetcher<TData = unknown, TParams = unknown> = (params: TParams) => Promise<TData> | TData;
 
@@ -32,7 +32,7 @@ export type LogFunction = (type: LogType, data?: Record<string, unknown>) => voi
 
 const defaultLog: LogFunction = () => {};
 
-// ============ Preloader Config ============
+// ============ 预加载配置 ============
 
 export interface IPreloader<TData = unknown, TParams = Record<string, unknown>> {
   fetcher: Fetcher<TData, TParams>;
@@ -48,10 +48,23 @@ export function createPreloadConfig<TData = unknown, TParams = Record<string, un
   return { fetcher, params, options: { metadata } };
 }
 
+// ============ 缓存类型辅助 ============
+
+type SWRCache = Cache<State<unknown, unknown>>;
+
+function getCacheData<TData>(cache: SWRCache, key: string): TData | undefined {
+  const cached = cache.get(key);
+  if (cached !== undefined) {
+    const state = cached as State<TData, unknown>;
+    return state.data;
+  }
+  return undefined;
+}
+
 // ============ Hooks ============
 
 /**
- * Hook to use SWR with prefetch support
+ * 使用 SWR 进行数据请求的 Hook，支持预请求
  */
 export function useRequestBySwr<TData = unknown, TParams = Record<string, unknown>>(
   task: Fetcher<TData, TParams>,
@@ -73,7 +86,7 @@ export function useRequestBySwr<TData = unknown, TParams = Record<string, unknow
   }, [isHit, log, serializedKey]);
 
   const fetcher = useCallback(async (key: string) => {
-    const parsed = JSON.parse(key);
+    const parsed = JSON.parse(key) as Record<string, unknown>;
     const { metadata: _m, ...restParams } = parsed;
     const result = await task(restParams as TParams);
     if (!isHit) log(LogType.resourceFinished);
@@ -94,7 +107,7 @@ export function useRequestBySwr<TData = unknown, TParams = Record<string, unknow
 }
 
 /**
- * Hook to use SWR with preload config
+ * 使用预加载配置的 SWR Hook
  */
 export function useRequestBySwrWithPreloadConfig<TData = unknown, TParams = Record<string, unknown>>(
   config: IPreloader<TData, TParams>
@@ -102,10 +115,10 @@ export function useRequestBySwrWithPreloadConfig<TData = unknown, TParams = Reco
   return useRequestBySwr<TData, TParams>(config.fetcher, config.params, config.options);
 }
 
-// ============ Preload Functions ============
+// ============ 预加载函数 ============
 
 /**
- * Preload data into SWR cache
+ * 预加载数据到 SWR 缓存
  */
 export async function preloadBySwr<TData = unknown, TParams = Record<string, unknown>>(
   fetcher: Fetcher<TData, TParams>,
@@ -115,14 +128,16 @@ export async function preloadBySwr<TData = unknown, TParams = Record<string, unk
   const { metadata, log = defaultLog, key } = options;
   const serializedKey = JSON.stringify({ metadata, ...params });
 
-  const data = await swrPreload(serializedKey, () => fetcher({ ...params, weirwoodIgnored: true } as TParams));
+  const data = await swrPreload<TData, string>(serializedKey, () =>
+    fetcher({ ...params, weirwoodIgnored: true } as TParams) as Promise<TData>
+  );
   log(LogType.createPreloadCache, { key });
 
-  return data as TData;
+  return data;
 }
 
 /**
- * Hook to get preload callback
+ * 获取预加载回调的 Hook
  */
 export function usePreloadBySwrCallback() {
   const { cache } = useSWRConfig();
@@ -136,10 +151,9 @@ export function usePreloadBySwrCallback() {
       const { metadata } = options;
       const serializedKey = JSON.stringify({ metadata, ...params });
 
-      const cached = cache.get(serializedKey);
-      if (cached !== undefined) {
-        const cachedData = cached as { data?: TData };
-        if (cachedData?.data !== undefined) return cachedData.data;
+      const cachedData = getCacheData<TData>(cache, serializedKey);
+      if (cachedData !== undefined) {
+        return cachedData;
       }
 
       return preloadBySwr(fetcher, params, options);
@@ -148,7 +162,7 @@ export function usePreloadBySwrCallback() {
   );
 }
 
-// ============ Batch Preload ============
+// ============ 批量预加载 ============
 
 export type PreloadPoolConfig = [
   Array<IPreloader | (() => Promise<(data: unknown) => IPreloader>)>,
@@ -156,7 +170,7 @@ export type PreloadPoolConfig = [
 ];
 
 /**
- * Execute SWR preload pool - batch preload multiple requests
+ * 执行 SWR 预加载池 - 批量预加载多个请求
  */
 export async function executePreloadPool(
   preloadReqList: PreloadPoolConfig[0],

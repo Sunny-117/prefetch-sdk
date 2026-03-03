@@ -11,10 +11,10 @@ import {
 import { getPrefetchSource, consumePrefetch } from '@prefetch-sdk/html-script';
 import { useRequestBySwr, preloadBySwr } from '@prefetch-sdk/swr';
 
-// Create a prefetch pool
+// 创建预请求池
 const pool = createPrefetchPool({ debug: true, namespace: '__DEMO_POOL__' });
 
-// Example fetchers
+// 示例请求函数
 async function fetchUser(params: { id: number }) {
   const response = await fetch(`https://jsonplaceholder.typicode.com/users/${params.id}`);
   return response.json();
@@ -25,7 +25,7 @@ async function fetchTodos() {
   return response.json();
 }
 
-// Demo: HTML Prefetch Consumption
+// 演示: HTML 预请求消费
 function HtmlPrefetchDemo() {
   const [data, setData] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(false);
@@ -41,11 +41,11 @@ function HtmlPrefetchDemo() {
 
   return (
     <div className="demo-section">
-      <h3>HTML Prefetch Consumption</h3>
-      <p>This data was prefetched in HTML &lt;head&gt; before React loaded.</p>
-      {source && <p style={{ fontSize: '0.875rem', color: '#666' }}>Source: {source.path}</p>}
+      <h3>HTML 预请求消费</h3>
+      <p>此数据在 HTML &lt;head&gt; 中预请求，React 加载前已开始请求。</p>
+      {source && <p style={{ fontSize: '0.875rem', color: '#666' }}>来源: {source.path}</p>}
       <button onClick={handleConsume} disabled={loading}>
-        {loading ? 'Loading...' : 'Consume Prefetch'}
+        {loading ? '加载中...' : '消费预请求'}
       </button>
       {data !== null && (
         <div className="data-display">
@@ -56,7 +56,7 @@ function HtmlPrefetchDemo() {
   );
 }
 
-// Demo: SWR Preload
+// 演示: SWR 预加载
 function SwrPreloadDemo() {
   const [preloaded, setPreloaded] = useState(false);
 
@@ -74,16 +74,16 @@ function SwrPreloadDemo() {
   return (
     <div className="demo-section">
       <h3>
-        SWR Preload
-        {pending && <span className="status loading">Loading...</span>}
-        {data && <span className="status success">Loaded</span>}
+        SWR 预加载
+        {pending && <span className="status loading">加载中...</span>}
+        {data && <span className="status success">已加载</span>}
       </h3>
-      <p>Preload data into SWR cache, then use it with useSWR hook.</p>
+      <p>预加载数据到 SWR 缓存，然后通过 useSWR hook 使用。</p>
       <button onClick={handlePreload} disabled={preloaded}>
-        {preloaded ? 'Preloaded' : 'Preload User #2'}
+        {preloaded ? '已预加载' : '预加载用户 #2'}
       </button>
       <button onClick={refresh} disabled={!preloaded} className="btn-secondary">
-        Refresh
+        刷新
       </button>
       {data !== null && (
         <div className="data-display">
@@ -94,7 +94,7 @@ function SwrPreloadDemo() {
   );
 }
 
-// Demo: Cache Strategy
+// 演示: 缓存策略
 function CacheDemo() {
   const [data, setData] = useState<unknown>(null);
   const [fromCache, setFromCache] = useState(false);
@@ -115,11 +115,11 @@ function CacheDemo() {
   return (
     <div className="demo-section">
       <h3>
-        Cache Strategy
-        {fromCache && <span className="status success">From Cache</span>}
+        缓存策略
+        {fromCache && <span className="status success">来自缓存</span>}
       </h3>
-      <p>Uses today's date as cache key. Data is cached in localStorage.</p>
-      <button onClick={handleFetch}>Fetch with Cache</button>
+      <p>使用当天日期作为缓存 key，数据缓存在 localStorage 中。</p>
+      <button onClick={handleFetch}>带缓存请求</button>
       {data !== null && (
         <div className="data-display">
           <pre>{JSON.stringify(data, null, 2)}</pre>
@@ -129,7 +129,7 @@ function CacheDemo() {
   );
 }
 
-// Demo: Pool API
+// 演示: 请求池 API
 function PoolDemo() {
   const [poolSize, setPoolSize] = useState(0);
   const [data, setData] = useState<unknown>(null);
@@ -155,18 +155,18 @@ function PoolDemo() {
   return (
     <div className="demo-section">
       <h3>
-        Prefetch Pool
+        预请求池
         <span className="status" style={{ background: '#e9ecef', color: '#495057' }}>
-          Size: {poolSize}
+          数量: {poolSize}
         </span>
       </h3>
-      <p>Manage multiple prefetch requests in a pool.</p>
-      <button onClick={handlePrefetch}>Add to Pool</button>
+      <p>在请求池中管理多个预请求。</p>
+      <button onClick={handlePrefetch}>添加到池</button>
       <button onClick={handleConsume} className="btn-secondary" disabled={poolSize === 0}>
-        Consume First
+        消费第一个
       </button>
       <button onClick={() => { pool.clear(); setPoolSize(0); setData(null); }} className="btn-secondary">
-        Clear
+        清空
       </button>
       {data !== null && (
         <div className="data-display">
@@ -177,40 +177,40 @@ function PoolDemo() {
   );
 }
 
-// Main App
+// 主应用
 export default function App() {
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   return (
     <SWRConfig value={{ revalidateOnFocus: false }}>
       <div className="container">
-        <h1>Prefetch SDK Playground</h1>
+        <h1>Prefetch SDK 演示</h1>
         <p className="subtitle">
-          A prefetch solution for modern web apps. Today: {formatDate()}
+          现代 Web 应用的预请求解决方案。今日: {formatDate()}
         </p>
 
         <div className="feature-list">
           <div className="feature-card">
-            <h4>HTML Prefetch</h4>
-            <p>Start fetching before JS loads.</p>
+            <h4>HTML 预请求</h4>
+            <p>JS 加载前开始请求</p>
           </div>
           <div className="feature-card">
-            <h4>SWR Integration</h4>
-            <p>Preload into SWR cache.</p>
+            <h4>SWR 集成</h4>
+            <p>预加载到 SWR 缓存</p>
           </div>
           <div className="feature-card">
-            <h4>Cache Strategies</h4>
-            <p>Flexible caching options.</p>
+            <h4>缓存策略</h4>
+            <p>灵活的缓存选项</p>
           </div>
         </div>
 
-        <h2>Examples</h2>
+        <h2>示例</h2>
         <HtmlPrefetchDemo />
         <SwrPreloadDemo />
 
-        <h2>Advanced</h2>
+        <h2>高级功能</h2>
         <button onClick={() => setShowAdvanced(!showAdvanced)}>
-          {showAdvanced ? 'Hide' : 'Show'} Advanced
+          {showAdvanced ? '隐藏' : '显示'} 高级功能
         </button>
 
         {showAdvanced && (

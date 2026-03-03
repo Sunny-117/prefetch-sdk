@@ -1,9 +1,17 @@
 /**
  * @prefetch-sdk/core
- * Core utilities - pool, cache strategies, and helpers
+ * 核心工具包 - 请求池、缓存策略、工具函数
  */
 
-// ============ Types ============
+// ============ 全局类型扩展 ============
+
+declare global {
+  interface Window {
+    [key: string]: unknown;
+  }
+}
+
+// ============ 类型定义 ============
 
 export type Fetcher<TData = unknown, TParams = unknown> = (params: TParams) => Promise<TData> | TData;
 
@@ -15,9 +23,9 @@ export interface PrefetchConfig<TData = unknown, TParams = unknown> {
   condition?: (dependencyResults: unknown[]) => boolean;
 }
 
-export interface PrefetchEntry<TData = unknown> {
+export interface PrefetchEntry<TData = unknown, TParams = unknown> {
   promise: Promise<TData>;
-  config: PrefetchConfig<TData>;
+  config: PrefetchConfig<TData, TParams>;
   timestamp: number;
   status: 'pending' | 'fulfilled' | 'rejected';
   data?: TData;
@@ -36,11 +44,11 @@ export interface CachedData<TData = unknown> {
   key: string;
 }
 
-// ============ PrefetchPool ============
+// ============ 请求池 ============
 
 export class PrefetchPool {
-  private entries: Map<string, PrefetchEntry> = new Map();
-  private source: Map<string, { config: PrefetchConfig; params: unknown }> = new Map();
+  private entries = new Map<string, PrefetchEntry<unknown, unknown>>();
+  private source = new Map<string, { config: PrefetchConfig<unknown, unknown>; params: unknown }>();
   private namespace: string;
   private debug: boolean;
 
@@ -57,45 +65,48 @@ export class PrefetchPool {
     return this.entries.has(name);
   }
 
-  get<TData = unknown>(name: string): PrefetchEntry<TData> | undefined {
-    return this.entries.get(name) as PrefetchEntry<TData> | undefined;
+  get<TData = unknown, TParams = unknown>(name: string): PrefetchEntry<TData, TParams> | undefined {
+    return this.entries.get(name) as PrefetchEntry<TData, TParams> | undefined;
   }
 
   getSource(name: string) {
     return this.source.get(name);
   }
 
-  async execute<TData = unknown, TParams = unknown>(
+  async execute<TData, TParams = unknown>(
     config: PrefetchConfig<TData, TParams>
-  ): Promise<TData> {
+  ): Promise<TData | undefined> {
     const { name, fetcher, params, dependencies, condition } = config;
 
-    // Check if already pending
+    // 检查是否已在请求中
     const existing = this.entries.get(name);
     if (existing?.status === 'pending') {
-      this.log(`"${name}" already pending`);
+      this.log(`"${name}" 已在请求中`);
       return existing.promise as Promise<TData>;
     }
 
-    // Wait for dependencies
+    // 等待依赖完成
     let depResults: unknown[] = [];
     if (dependencies?.length) {
-      this.log(`"${name}" waiting for dependencies:`, dependencies);
+      this.log(`"${name}" 等待依赖:`, dependencies);
       depResults = await Promise.all(
         dependencies.map(dep => this.entries.get(dep)?.promise)
       );
     }
 
-    // Check condition
+    // 检查条件
     if (condition && !condition(depResults)) {
-      this.log(`"${name}" skipped due to condition`);
-      return undefined as unknown as TData;
+      this.log(`"${name}" 因条件不满足被跳过`);
+      return undefined;
     }
 
-    // Store source
-    this.source.set(name, { config: config as PrefetchConfig, params });
+    // 存储来源信息
+    this.source.set(name, {
+      config: config as unknown as PrefetchConfig<unknown, unknown>,
+      params,
+    });
 
-    // Execute
+    // 执行请求
     const startTime = Date.now();
     const promise = Promise.resolve()
       .then(() => fetcher(params as TParams))
@@ -103,26 +114,27 @@ export class PrefetchPool {
         const entry = this.entries.get(name);
         if (entry) {
           entry.status = 'fulfilled';
-          entry.data = data;
+          (entry as PrefetchEntry<TData, TParams>).data = data;
         }
-        this.log(`"${name}" completed in ${Date.now() - startTime}ms`);
+        this.log(`"${name}" 完成，耗时 ${Date.now() - startTime}ms`);
         return data;
       })
       .catch(error => {
         const entry = this.entries.get(name);
         if (entry) {
           entry.status = 'rejected';
-          entry.error = error;
+          entry.error = error instanceof Error ? error : new Error(String(error));
         }
         throw error;
       });
 
-    this.entries.set(name, {
+    const entry: PrefetchEntry<TData, TParams> = {
       promise,
-      config: config as PrefetchConfig<TData>,
+      config,
       timestamp: startTime,
       status: 'pending',
-    } as PrefetchEntry);
+    };
+    this.entries.set(name, entry as PrefetchEntry<unknown, unknown>);
 
     return promise;
   }
@@ -130,11 +142,11 @@ export class PrefetchPool {
   async executeAll<TData = unknown>(
     configs: Array<PrefetchConfig<TData>>,
     options: { parallel?: boolean } = {}
-  ): Promise<TData[]> {
+  ): Promise<Array<TData | undefined>> {
     if (options.parallel !== false) {
       return Promise.all(configs.map(c => this.execute(c)));
     }
-    const results: TData[] = [];
+    const results: Array<TData | undefined> = [];
     for (const config of configs) {
       results.push(await this.execute(config));
     }
@@ -174,7 +186,7 @@ export class PrefetchPool {
 
   mountToWindow(): void {
     if (typeof window !== 'undefined') {
-      (window as unknown as Record<string, unknown>)[this.namespace] = {
+      window[this.namespace] = {
         pool: this,
         entries: this.entries,
         source: Object.fromEntries(this.source),
@@ -194,7 +206,7 @@ export function getGlobalPool(): PrefetchPool {
   return globalPool;
 }
 
-// ============ Cache Strategies ============
+// ============ 缓存策略 ============
 
 export interface CacheStorageAdapter {
   get(key: string): string | null;
@@ -239,7 +251,7 @@ export function withCache<TData = unknown, TParams = unknown>(
   return async (params: TParams): Promise<TData> => {
     const key = `${prefix}${strategy.getKey(params)}`;
 
-    // Try cache
+    // 尝试读取缓存
     try {
       const cached = storage.get(key);
       if (cached) {
@@ -248,17 +260,17 @@ export function withCache<TData = unknown, TParams = unknown>(
           return parsed.data;
         }
       }
-    } catch { /* ignore */ }
+    } catch { /* 忽略 */ }
 
     strategy.cleanup?.();
 
-    // Fetch
+    // 发起请求
     const data = await fetcher(params);
 
-    // Store
+    // 存储缓存
     try {
       storage.set(key, JSON.stringify({ data, timestamp: Date.now(), key }));
-    } catch { /* ignore */ }
+    } catch { /* 忽略 */ }
 
     return data;
   };
@@ -296,7 +308,7 @@ export function ttlCacheStrategy<TData = unknown>(
   };
 }
 
-// ============ Utilities ============
+// ============ 工具函数 ============
 
 export function uuid(): string {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
