@@ -1,6 +1,6 @@
 {
   "name": "@prefetch-sdk/html-script",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "HTML inline script for early prefetch before JS loads",
   "type": "module",
   "main": "./dist/index.cjs",
