@@ -141,7 +141,7 @@ pnpm playground
 pnpm changeset
 
 # 2. 更新版本号和 CHANGELOG
-pnpm version
+pnpm run version
 
 # 3. 构建并发布
 pnpm release
